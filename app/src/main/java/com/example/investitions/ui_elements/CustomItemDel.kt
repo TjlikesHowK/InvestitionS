@@ -1,5 +1,6 @@
 package com.example.investitions.ui_elements
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import coil.compose.rememberAsyncImagePainter
 import androidx.compose.foundation.background
@@ -25,11 +26,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.investitions.adapters.DBHandler
 import com.example.investitions.adapters.SearchStockData
 import com.example.investitions.screens.ALLDATA_portfolio
 
 @Composable
-fun CustomItemDel(data: SearchStockData){
+fun CustomItemDel(data: SearchStockData, context: Context){
     Row (
         modifier = Modifier
             .background(Color.White, shape = RoundedCornerShape(25.dp))
@@ -72,7 +74,10 @@ fun CustomItemDel(data: SearchStockData){
             horizontalAlignment = Alignment.End
         ) {
             IconButton(
-                onClick = { ALLDATA_portfolio.removeAt(ALLDATA_portfolio.indexOf(SearchStockData(data.logo, data.name, data.ticker)))}
+                onClick = {
+                    ALLDATA_portfolio.removeAt(ALLDATA_portfolio.indexOf(SearchStockData(data.logo, data.name, data.ticker)))
+                    val dbHandler = DBHandler(context)
+                    dbHandler.delete(data.name)}
             ) {
                 Icon(
                     imageVector = Icons.Filled.Delete,
@@ -82,15 +87,4 @@ fun CustomItemDel(data: SearchStockData){
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun preview(){
-    CustomItemDel(
-        data = SearchStockData(
-        logo = "https://static.finnhub.io/logo/87cb30d8-80df-11ea-8951-00000000092a.png",
-        name = "STKull",
-        ticker = "STK")
-    )
 }

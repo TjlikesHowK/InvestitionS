@@ -1,5 +1,6 @@
 package com.example.investitions.screens
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,18 +11,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.saveable.rememberSaveable
+import com.example.investitions.adapters.DBHandler
 import com.example.investitions.adapters.SearchStockData
 import com.example.investitions.ui_elements.CustomItemDel
 
 var ALLDATA_portfolio = listOf<SearchStockData>().toMutableList()
 
 @Composable
-fun PortfolioScreen(){
+fun PortfolioScreen(context: Context){
     val getData = rememberSaveable{listOf<SearchStockData>()}.toMutableList()
-    getData.addAll(ALLDATA_portfolio)
+
+    if(ALLDATA_portfolio.isNotEmpty()){
+        getData.addAll(ALLDATA_portfolio)
+    }else{
+        val dbHandler = DBHandler(context);
+        getData.addAll(dbHandler.read())
+        ALLDATA_portfolio.addAll(dbHandler.read())
+    }
 
     Column(
         modifier = Modifier
@@ -33,7 +40,7 @@ fun PortfolioScreen(){
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             items(items = getData){ data ->
-                CustomItemDel(data = data)
+                CustomItemDel(data = data, context = context)
             }
         }
     }

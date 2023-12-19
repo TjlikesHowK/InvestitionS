@@ -24,9 +24,9 @@ import androidx.compose.material.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.example.investitions.adapters.SearchStockData
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
                             BottomBar(navController = navController)
                         }
                     ) {
-                        BottomNavGraph(navController = navController)
+                        BottomNavGraph(navController = navController, context = LocalContext.current)
                     }
                 }
             }

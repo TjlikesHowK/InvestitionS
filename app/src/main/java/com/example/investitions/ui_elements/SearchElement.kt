@@ -1,6 +1,7 @@
 package com.example.investitions.ui_elements
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.example.investitions.adapters.MainViewModel
 import com.example.investitions.adapters.SearchStockData
 import com.example.investitions.adapters.SearchWidgetState
+import com.example.investitions.adapters.getCompanyData
 import com.example.investitions.adapters.getTickersData
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -34,7 +36,7 @@ import kotlinx.serialization.json.jsonObject
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun SearchElement(mainViewModel: MainViewModel){
+fun SearchElement(mainViewModel: MainViewModel, context: Context){
     val searchWidgetState by mainViewModel.searchWidgetState
     val searchTextState by mainViewModel.searchTextState
     val tickerList = remember { mutableStateListOf<SearchStockData>() }
@@ -57,11 +59,19 @@ fun SearchElement(mainViewModel: MainViewModel){
 
                     val count = data.getValue("count").toString().toInt()
                     for (i in 0 until count){
-                        tickerList.add(SearchStockData(
-                            logo = "https://static.finnhub.io/logo/87cb30d8-80df-11ea-8951-00000000092a.png",
-                            name = data.getValue("result").jsonArray.toList()[i].jsonObject["description"].toString(),
-                            ticker = data.getValue("result").jsonArray.toList()[i].jsonObject["symbol"].toString()
-                        ))
+                        try {
+                            tickerList.add(
+                                SearchStockData(
+                                    logo = getCompanyData(
+                                        data.getValue("result").jsonArray.toList()[i].jsonObject["symbol"].toString().replace("\"", "")
+                                    ).getValue("logo").toString().replace("\"", ""),
+                                    name = data.getValue("result").jsonArray.toList()[i].jsonObject["description"].toString(),
+                                    ticker = data.getValue("result").jsonArray.toList()[i].jsonObject["symbol"].toString()
+                                )
+                            )
+                        }catch (_: Exception){
+                            println(getCompanyData(data.getValue("result").jsonArray.toList()[i].jsonObject["symbol"].toString().replace("\"", "")))
+                        }
                     }
                 },
                 onSearchTriggered = {
@@ -75,7 +85,7 @@ fun SearchElement(mainViewModel: MainViewModel){
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             items(items = tickerList.toList()){ data ->
-                CustomItemAdd(data = data)
+                CustomItemAdd(data = data, context = context)
             }
         }
     }

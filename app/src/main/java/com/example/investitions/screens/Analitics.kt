@@ -40,8 +40,6 @@ fun AnaliticsScreen(){
     for (i in 0 until ALLDATA_portfolio.size){
         data = getCompanyData(ALLDATA_portfolio.toList()[i].ticker.replace("\"", ""))
 
-        println(data)
-
         industry = try {
             data.getValue("finnhubIndustry").toString().replace("\"", "")
         }catch (_: Exception){
